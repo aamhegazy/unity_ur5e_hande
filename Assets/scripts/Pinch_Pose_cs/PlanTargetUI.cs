@@ -1,39 +1,56 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+
 public class PlanTargetUI : MonoBehaviour
 {
-    public TextMeshProUGUI statusText; 
-    public UnityEngine.UI.Button planButton;
-    
-    
+    [Header("Status")]
+    public TextMeshProUGUI statusText;
+
+    [Header("Buttons")]
+    public Button planButton;
+    public Button executeButton;
+    public Button cancelButton;
+
+    [Header("Colors")]
+    public Color planActiveColor = new Color(0.2f, 0.8f, 0.2f);
+    public Color executeActiveColor = new Color(0.2f, 0.5f, 1.0f);
+    public Color cancelActiveColor = new Color(1.0f, 0.2f, 0.2f);
+    public Color disabledColor = new Color(0.4f, 0.4f, 0.4f);
+
+    public enum Phase { Idle, ReadyToPlan, Planning, ReadyToExecute, Executing, Done, Failed }
+
     void Start()
     {
-        if(statusText == null)
-            statusText = GetComponentInChildren<TextMeshProUGUI>();
+        SetPhase(Phase.ReadyToPlan);
+    }
 
-        if(planButton == null)
-            planButton = GetComponentInChildren<UnityEngine.UI.Button>();
+    public void SetPhase(Phase phase)
+    {
+        bool canPlan = phase == Phase.ReadyToPlan || phase == Phase.Failed;
+        bool canExecute = phase == Phase.ReadyToExecute;
+        bool canCancel = phase == Phase.Executing;
 
-        if(planButton != null)
-            planButton.onClick.AddListener(OnPlanPressed); 
+        SetButton(planButton, canPlan, planActiveColor);
+        SetButton(executeButton, canExecute, executeActiveColor);
+        SetButton(cancelButton, canCancel, cancelActiveColor);
+    }
+
+    private void SetButton(Button btn, bool active, Color activeCol)
+    {
+        if (btn == null) return;
+        btn.interactable = active;
+        var img = btn.GetComponent<Image>();
+        if (img != null) img.color = active ? activeCol : disabledColor;
     }
 
     public void SetStatus(string message)
-    {  
-        if(statusText != null)
-            statusText.text = message; 
-        
-    }
-    public void OnPlanPressed()
     {
-        SetStatus("Planning..."); 
+        if (statusText != null) statusText.text = message;
     }
 
     public void ShowError(string error)
     {
-        if(statusText != null)
-            statusText.text = $"<color=red>{error}</color>";
+        if (statusText != null) statusText.text = $"<color=red>{error}</color>";
     }
-
-
 }
