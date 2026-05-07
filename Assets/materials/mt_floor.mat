@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mt_Trans_blue
+  m_Name: mt_floor
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -134,8 +134,8 @@ Material:
     - _WorkflowMode: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.20879307, g: 0.403107, b: 0.9622641, a: 0.8}
-    - _Color: {r: 0.20879304, g: 0.40310696, b: 0.9622641, a: 0.8}
+    - _BaseColor: {r: 0.20784314, g: 0.9607843, b: 0.24645452, a: 1}
+    - _Color: {r: 0.6020826, g: 0.6226415, b: 0.6226415, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
