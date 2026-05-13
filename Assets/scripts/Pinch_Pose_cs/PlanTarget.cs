@@ -10,9 +10,13 @@ public class PlanTarget : MonoBehaviour
     private MoveItActionClient moveItActionClient;
 
     private string currentPlanId;
+    private MoveItActionClient actionClient;
+
 
     void Start()
     {
+        actionClient = FindFirstObjectByType<MoveItActionClient>();
+
         ui = GetComponent<PlanTargetUI>();
         trajectoryPreview = GetComponent<TrajectoryPreview>();
         moveItActionClient = FindFirstObjectByType<MoveItActionClient>();
@@ -37,8 +41,9 @@ public class PlanTarget : MonoBehaviour
 
         Debug.Log($"[PlanTarget] Sending plan to ROS, target pos={transform.position}");
 
-        moveItActionClient.PlanToPose(transform.position, transform.rotation, (result) =>
-        {
+// TEMP: hardcode tool-pointing-down orientation for testing
+            Quaternion testRot = Quaternion.Euler(180, 0, 0);
+            moveItActionClient.PlanToPose(transform.position, testRot, (result) =>        {
             Debug.Log($"[PlanTarget] Got plan result: success={result.success}");
             if (result.success)
             {
@@ -120,4 +125,13 @@ public class PlanTarget : MonoBehaviour
                 break;
         }
     }
+    public void OnOpenGripperPressed()
+        {
+            actionClient.OpenGripper();
+        }
+
+        public void OnCloseGripperPressed()
+        {
+            actionClient.CloseGripper();
+}
 }
