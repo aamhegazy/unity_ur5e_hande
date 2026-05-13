@@ -26,15 +26,28 @@ public class WorkspaceSphereVisualizer : MonoBehaviour
         // Disable collider so raycasts pass through
         if (TryGetComponent(out Collider col)) Destroy(col);
 
-        // Transparent material
-        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-        mat.SetFloat("_Surface", 1);   // Transparent
-        mat.SetFloat("_Blend", 0);     // Alpha blend
-        mat.SetOverrideTag("RenderType", "Transparent");
-        mat.renderQueue = 3000;
-        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        mat.SetInt("_ZWrite", 0);
+        // Transparent material with shader fallback
+        Shader sh = Shader.Find("Universal Render Pipeline/Lit");
+        if (sh == null) sh = Shader.Find("Standard");
+        if (sh == null) sh = Shader.Find("Sprites/Default");
+
+        var mat = new Material(sh);
+        if (sh != null && sh.name.Contains("Universal Render Pipeline"))
+        {
+            // Enable transparency in URP
+            mat.SetFloat("_Surface", 1);                     // 0 opaque, 1 transparent
+            mat.SetFloat("_Blend", 0);                       // 0 alpha, 1 premultiply, 2 additive
+            mat.SetFloat("_AlphaClip", 0);
+            mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetFloat("_ZWrite", 0);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.SetOverrideTag("RenderType", "Transparent");
+            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            mat.SetColor("_BaseColor", sphereColor);
+        }
         mat.color = sphereColor;
         GetComponent<MeshRenderer>().material = mat;
 

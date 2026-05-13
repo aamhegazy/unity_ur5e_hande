@@ -71,14 +71,20 @@ public class PlanTargetSpawner : MonoBehaviour
         Destroy(previewSphere.GetComponent<Collider>());
         previewSphere.transform.localScale = Vector3.one * previewRadius * 2f;
 
-        previewMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-        previewMat.SetFloat("_Surface", 1);
-        previewMat.SetFloat("_Blend", 0);
-        previewMat.SetOverrideTag("RenderType", "Transparent");
-        previewMat.renderQueue = 3000;
-        previewMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        previewMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        previewMat.SetInt("_ZWrite", 0);
+            Shader sh = Shader.Find("Universal Render Pipeline/Lit");
+            if (sh == null) sh = Shader.Find("Standard");
+            if (sh == null) sh = Shader.Find("Sprites/Default");
+            previewMat = new Material(sh);
+            if (sh != null && sh.name.Contains("Universal Render Pipeline"))
+            {
+                previewMat.SetFloat("_Surface", 1);
+                previewMat.SetFloat("_Blend", 0);
+                previewMat.SetOverrideTag("RenderType", "Transparent");
+                previewMat.renderQueue = 3000;
+                previewMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                previewMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                previewMat.SetInt("_ZWrite", 0);
+            }
         previewSphere.GetComponent<MeshRenderer>().material = previewMat;
 
         // Path line
